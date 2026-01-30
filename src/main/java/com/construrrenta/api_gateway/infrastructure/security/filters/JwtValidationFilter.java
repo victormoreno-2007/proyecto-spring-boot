@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
 
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtValidationFilter extends OncePerRequestFilter {
 
     private final TokenPort tokenPort; // Inyectamos la interfaz, no la implementación (DIP)
 
-    public JwtAuthenticationFilter(TokenPort tokenPort) {
+    public JwtValidationFilter(TokenPort tokenPort) {
         this.tokenPort = tokenPort;
     }
 

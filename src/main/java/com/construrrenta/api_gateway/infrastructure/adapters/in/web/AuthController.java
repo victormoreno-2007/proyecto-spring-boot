@@ -1,0 +1,27 @@
+package com.construrrenta.api_gateway.infrastructure.adapters.in.web;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.construrrenta.api_gateway.domain.model.TokenDTO;
+import com.construrrenta.api_gateway.domain.ports.in.AuthUseCase;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+@RequestMapping("/api/v1/auth")
+public class AuthController {
+ 
+    private final AuthUseCase authUseCase;
+
+    public AuthController(AuthUseCase authUseCase) {
+        this.authUseCase = authUseCase;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginRequest request) { 
+        return ResponseEntity.ok(authUseCase.login(request.getEmail(), request.getPassword()));
+    }
+}
