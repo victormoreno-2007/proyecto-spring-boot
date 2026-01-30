@@ -1,4 +1,4 @@
-package com.construrrenta.api_gateway.domain.model;
+package com.construrrenta.api_gateway.domain.model.booking;
 
 
 //Estados de reserva

@@ -1,6 +1,6 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.security;
 
-import com.construrrenta.api_gateway.domain.model.Role;
+import com.construrrenta.api_gateway.domain.model.user.Role;
 import com.construrrenta.api_gateway.domain.ports.out.TokenPort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

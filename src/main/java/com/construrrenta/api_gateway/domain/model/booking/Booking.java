@@ -1,4 +1,4 @@
-package com.construrrenta.api_gateway.domain.model;
+package com.construrrenta.api_gateway.domain.model.booking;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
+import com.construrrenta.api_gateway.domain.model.tool.Tool;
 
 public class Booking {
     private UUID id;

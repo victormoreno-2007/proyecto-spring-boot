@@ -2,7 +2,7 @@ package com.construrrenta.api_gateway.domain.ports.out;
 
 import java.util.Optional;
 
-import com.construrrenta.api_gateway.domain.model.User;
+import com.construrrenta.api_gateway.domain.model.user.User;
 
 public interface UserRepositoryPort {
     Optional<User> findByEmail(String email);

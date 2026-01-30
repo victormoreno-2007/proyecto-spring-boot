@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.construrrenta.api_gateway.domain.model.TokenDTO;
+import com.construrrenta.api_gateway.domain.model.user.Role;
+import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.in.AuthUseCase;
+import com.construrrenta.api_gateway.infrastructure.adapters.in.web.dto.RegisterRequest;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
@@ -23,5 +26,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginRequest request) { 
         return ResponseEntity.ok(authUseCase.login(request.getEmail(), request.getPassword()));
+    }
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+        User newUser = User.create(
+            request.getEmail(),
+            request.getPassword(),
+            request.getFirstName(),
+            request.getLastName(),
+            Role.CUSTOMER 
+        );
+        
+        User createdUser = authUseCase.register(newUser);
+        
+        return ResponseEntity.ok(createdUser);
     }
 }

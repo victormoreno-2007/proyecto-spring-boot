@@ -1,14 +1,11 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.construrrenta.api_gateway.domain.model.tool.ToolStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -18,36 +15,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tools")
+@Table(name = "damage_reports")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class ToolEntity {
-    
+public class DamageReportEntity {
     @Id
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Column(name = "price_per_day", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerDay;
+    @Column(name = "repair_cost", precision = 10, scale = 2)
+    private BigDecimal repairCost;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "report_date", nullable = false)
+    private LocalDateTime reportDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ToolStatus status;
+    @Column(name = "is_repaired", nullable = false)
+    private boolean isRepaired;
 
-    @Column(name = "provider_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID providerId; // Relación lógica con User (Proveedor)
+    @Column(name = "booking_id", nullable = false)
+    private UUID bookingId;
 
     @PrePersist
     public void generateId() {
@@ -55,5 +46,4 @@ public class ToolEntity {
             this.id = UUID.randomUUID();
         }
     }
-
 }

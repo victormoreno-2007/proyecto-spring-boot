@@ -30,11 +30,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/api/v1/auth/**").permitAll(); // Estandarizamos ruta
+                auth.requestMatchers("/api/v1/auth/**").permitAll(); 
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                 auth.anyRequest().authenticated();
             })
-            // OJO: Usamos el filtro de validación ANTES del filtro de usuario/password estándar
             .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -2,7 +2,7 @@ package com.construrrenta.api_gateway.infrastructure.adapters.out.mappers;
 
 import org.mapstruct.Mapper;
 
-import com.construrrenta.api_gateway.domain.model.User;
+import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.UserEntity;
 
 @Mapper(componentModel = "spring")

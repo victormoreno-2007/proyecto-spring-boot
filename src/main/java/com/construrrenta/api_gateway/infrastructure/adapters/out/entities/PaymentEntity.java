@@ -1,9 +1,11 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.construrrenta.api_gateway.domain.model.tool.ToolStatus;
+import com.construrrenta.api_gateway.domain.model.payment.PaymentMethod;
+import com.construrrenta.api_gateway.domain.model.payment.PaymentStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,36 +20,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tools")
+@Table(name = "payments")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class ToolEntity {
+public class PaymentEntity {
     
     @Id
     @Column(updatable = false, nullable = false)
     private UUID id;
 
+    @Column(nullable = false, precision = 10, scale = 2 )
+    private BigDecimal amount;
+
+    @Column(name = "payment_date", nullable = false)
+    private LocalDateTime paymentDate;
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String name;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @Column(name = "price_per_day", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerDay;
-
-    @Column(name = "image_url")
-    private String imageUrl;
+    private PaymentMethod method;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ToolStatus status;
+    private PaymentStatus status;
 
-    @Column(name = "provider_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID providerId; // Relación lógica con User (Proveedor)
+    @Column(name = "booking_id", nullable = false)
+    private UUID bookingId;
 
     @PrePersist
     public void generateId() {
@@ -55,5 +54,4 @@ public class ToolEntity {
             this.id = UUID.randomUUID();
         }
     }
-
 }

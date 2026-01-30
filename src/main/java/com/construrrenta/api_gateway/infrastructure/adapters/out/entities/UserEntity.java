@@ -2,7 +2,7 @@ package com.construrrenta.api_gateway.infrastructure.adapters.out.entities;
 
 import java.util.UUID;
 
-import com.construrrenta.api_gateway.domain.model.Role;
+import com.construrrenta.api_gateway.domain.model.user.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

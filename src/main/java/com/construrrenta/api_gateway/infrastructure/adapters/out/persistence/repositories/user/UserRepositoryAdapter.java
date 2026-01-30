@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.construrrenta.api_gateway.domain.model.User;
+import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.out.UserRepositoryPort;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.UserEntity;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.mappers.UserMapper;

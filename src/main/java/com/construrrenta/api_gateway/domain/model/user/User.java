@@ -1,6 +1,7 @@
-package com.construrrenta.api_gateway.domain.model;
+package com.construrrenta.api_gateway.domain.model.user;
 
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
+
 import java.util.UUID;
 
 public class User {
