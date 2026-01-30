@@ -1,6 +1,7 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.user;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 .map(userMapper::toDomain);
     }
 
+    @Override
+    public Optional<User> findById(UUID id) {
+        return jpaUserRepository.findById(id) // Este método ya lo trae JpaRepository por defecto
+                .map(userMapper::toDomain);
+    }
+    
     @Override
     public User save(User user) {
         UserEntity entity = userMapper.toEntity(user);
