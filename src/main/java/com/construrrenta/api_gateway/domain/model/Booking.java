@@ -1,0 +1,75 @@
+package com.construrrenta.api_gateway.domain.model;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+
+import com.construrrenta.api_gateway.domain.exceptions.DomainException;
+
+public class Booking {
+    private UUID id;
+    private UUID userId;    
+    private UUID toolId;    
+    private UUID paymentId; // Referencia al pago (Víctor) - Opcional al inicio
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private BigDecimal totalPrice;
+    private BookingStatus status;
+
+    private Booking() {}
+
+    public static Booking create(UUID userId, Tool tool, LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate.isAfter(endDate)) {
+            throw new DomainException("La fecha de inicio no puede ser posterior al fin");
+        }
+        if (startDate.isBefore(LocalDateTime.now())) {
+            throw new DomainException("No se puede reservar en el pasado");
+        }
+        Booking booking = new Booking();
+        booking.id = UUID.randomUUID();
+        booking.userId = userId;
+        booking.toolId = tool.getId();
+        booking.startDate = startDate;
+        booking.endDate = endDate;
+        booking.status = BookingStatus.PENDING; // Nace pendiente de pago
+        booking.paymentId = null;
+
+        long days = ChronoUnit.DAYS.between(startDate, endDate);
+        if (days < 1) days = 1; 
+        
+        booking.totalPrice = tool.getPricePerDay().multiply(BigDecimal.valueOf(days));
+
+        return booking;
+    }
+    public static Booking reconstruct(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
+        Booking booking = new Booking();
+        booking.id = id;
+        booking.userId = userId;
+        booking.toolId = toolId;
+        booking.paymentId = paymentId;
+        booking.startDate = startDate;
+        booking.endDate = endDate;
+        booking.totalPrice = totalPrice;
+        booking.status = status;
+        return booking;
+    }
+
+    // Método para asociar el pago cuando Víctor lo haga
+    public void confirmPayment(UUID paymentId) {
+        this.paymentId = paymentId;
+        this.status = BookingStatus.CONFIRMED;
+    }
+
+    public UUID getId() { return id; }
+    public UUID getUserId() { return userId; }
+    public UUID getToolId() { return toolId; }
+    public UUID getPaymentId() { return paymentId; }
+    public LocalDateTime getStartDate() { return startDate; }
+    public LocalDateTime getEndDate() { return endDate; }
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public BookingStatus getStatus() { return status; }
+
+
+
+}
