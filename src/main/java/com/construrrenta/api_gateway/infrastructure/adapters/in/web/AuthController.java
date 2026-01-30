@@ -11,7 +11,7 @@ import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.in.AuthUseCase;
 import com.construrrenta.api_gateway.infrastructure.adapters.in.web.dto.RegisterRequest;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/auth")
