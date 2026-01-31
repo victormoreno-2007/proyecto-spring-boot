@@ -8,4 +8,5 @@ public interface TokenPort {
     String generateAccessToken(UUID userId, String email, Role role);
     UUID validateAccessToken(String token);
     String extractEmail(String token);
+    String extractRole(String token);
 }

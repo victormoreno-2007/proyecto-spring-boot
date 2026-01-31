@@ -1,5 +1,6 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,5 +42,19 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public boolean existsByEmail(String email) {
         return jpaUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return jpaUserRepository.findAll().stream()
+        .map(userMapper::toDomain)
+        .toList();
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        if (jpaUserRepository.existsById(id)) {
+            jpaUserRepository.deleteById(id);
+        }
     }
 }

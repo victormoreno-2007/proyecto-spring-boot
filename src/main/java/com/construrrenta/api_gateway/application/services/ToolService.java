@@ -1,6 +1,7 @@
 package com.construrrenta.api_gateway.application.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,7 @@ public class ToolService implements ToolUseCase {
 
     @Override
     public Tool createTool(Tool tool) {
-        // ✅ CORRECCIÓN:
-        // Ya NO intentamos usar tool.setStatus(AVAILABLE).
-        // Como usaste Tool.create() en el Controller, la herramienta
-        // ya viene con el estado correcto. Solo la guardamos.
+
         return toolRepositoryPort.save(tool);
     }
 
@@ -34,4 +32,43 @@ public class ToolService implements ToolUseCase {
     public List<Tool> getAvailableTools() {
         return toolRepositoryPort.findByStatus(ToolStatus.AVAILABLE);
     }
+
+    @Override
+    public List<Tool> getToolsByProvider(UUID providerId) {
+        return toolRepositoryPort.findByProviderId(providerId);
+    }
+
+    @Override
+    public void deleteTool(UUID id) {
+        toolRepositoryPort.deleteById(id);
+    }
+
+    @Override
+    public Tool getToolById(UUID id) {
+        return toolRepositoryPort.findById(id)
+                .orElseThrow(() -> new RuntimeException("Herramienta no encontrada"));
+    }
+
+    @Override
+    public Tool updateTool(UUID id, Tool toolDetails) {
+        // 1. Buscamos la herramienta existente
+        Tool existingTool = getToolById(id);
+
+        // 2. Actualizamos los datos (Creando una nueva instancia porque Tool es
+        // inmutable o usando setters si los tienes)
+        // Opción A: Si usas reconstruct (Recomendada por tu arquitectura)
+        Tool updatedTool = Tool.reconstruct(
+                existingTool.getId(),
+                toolDetails.getName(),
+                toolDetails.getDescription(),
+                toolDetails.getPricePerDay(),
+                toolDetails.getImageUrl(),
+                toolDetails.getStatus(),
+                existingTool.getProviderId() // El dueño NO cambia
+        );
+
+        // 3. Guardamos
+        return toolRepositoryPort.save(updatedTool);
+    }
+
 }

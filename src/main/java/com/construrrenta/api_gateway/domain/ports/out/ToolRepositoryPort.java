@@ -13,5 +13,6 @@ public interface ToolRepositoryPort {
     Optional<Tool> findById(UUID id);         // Buscar por ID (Puede no existir, por eso Optional)
     List<Tool> findAll();                     // Traer todas
     List<Tool> findByStatus(ToolStatus status); // Filtrar (ej: Solo las DISPONIBLES)
-
+    List<Tool> findByProviderId(UUID providerId); // Para ver MIS herramientas
+    void deleteById(UUID id);
 }
