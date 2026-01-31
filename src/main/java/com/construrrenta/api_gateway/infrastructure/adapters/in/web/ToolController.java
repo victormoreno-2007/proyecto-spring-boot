@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +49,46 @@ public class ToolController {
     @GetMapping
     public ResponseEntity<List<Tool>> getAllTools() {
         return ResponseEntity.ok(toolUseCase.getAllTools());
+    }
+
+    // 1. Ver MIS herramientas
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<List<Tool>> getMyTools(@PathVariable UUID providerId) {
+        return ResponseEntity.ok(toolUseCase.getToolsByProvider(providerId));
+    }
+
+    // 2. Eliminar herramienta
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTool(@PathVariable UUID id) {
+        toolUseCase.deleteTool(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 3. Actualizar herramienta
+    @PutMapping("/{id}")
+    public ResponseEntity<Tool> updateTool(@PathVariable UUID id, @RequestBody ToolRequest request) {
+        
+        // CORRECCIÓN: Si el providerId viene nulo en el JSON, inventamos uno temporal.
+        // No importa cuál sea, porque tu ToolService lo va a ignorar y 
+        // mantendrá el dueño original de la base de datos.
+        UUID safeProviderId = (request.getProviderId() != null) 
+                              ? request.getProviderId() 
+                              : UUID.randomUUID(); 
+
+        Tool toolUpdate = Tool.create(
+            request.getName(),
+            request.getDescription(),
+            request.getPricePerDay(),
+            request.getImageUrl(),
+            safeProviderId // <--- Usamos el ID seguro, nunca null
+        );
+        
+        return ResponseEntity.ok(toolUseCase.updateTool(id, toolUpdate));
+    }
+    // 4. Ver detalle de una herramienta (Útil para editar)
+    @GetMapping("/{id}")
+    public ResponseEntity<Tool> getToolById(@PathVariable UUID id) {
+        return ResponseEntity.ok(toolUseCase.getToolById(id));
     }
 
     // 👇 CLASE MANUAL (Sin @Data para evitar errores de Lombok)

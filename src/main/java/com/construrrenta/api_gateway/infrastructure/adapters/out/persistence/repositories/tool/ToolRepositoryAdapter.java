@@ -51,4 +51,18 @@ public class ToolRepositoryAdapter implements ToolRepositoryPort {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Tool> findByProviderId(UUID providerId) {
+        return jpaToolRepository.findByProviderId(providerId)
+                .stream()
+                .map(toolMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        if (jpaToolRepository.existsById(id)) {
+            jpaToolRepository.deleteById(id);
+        }
+    }
 }
