@@ -1,6 +1,7 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.mappers;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.construrrenta.api_gateway.domain.model.damage.DamageReport;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.DamageReportEntity;
@@ -21,5 +22,6 @@ public interface DamageReportMapper {
     }
 
     // De Dominio a Entidad
+    @Mapping(target = "isRepaired", source = "repaired")
     DamageReportEntity toEntity(DamageReport damageReport);
 }
