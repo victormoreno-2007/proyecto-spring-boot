@@ -56,7 +56,7 @@ public class BookingService implements ManageBookingUseCase {
 
     @Override
     public Booking getBooking(UUID id) {
-        return bookingRepositoryPort.findbyId(id)
+        return bookingRepositoryPort.findById(id)
                 .orElseThrow(() -> new DomainException("Reserva no encontrada"));
     }
 

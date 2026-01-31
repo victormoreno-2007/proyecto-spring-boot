@@ -14,7 +14,7 @@ public class DamageReport {
     private boolean isRepaired;
     private UUID bookingId;
 
-    private DamageReport() {}
+    public DamageReport() {}
 
     public static DamageReport create(String description, BigDecimal repairCost, UUID bookingId) {
         if (description == null || description.isEmpty()) {

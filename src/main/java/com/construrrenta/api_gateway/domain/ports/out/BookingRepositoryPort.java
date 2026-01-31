@@ -13,7 +13,7 @@ public interface BookingRepositoryPort {
 
     List<Booking> findByUserId(UUID userId); 
 
-    Optional<Booking> findbyId(UUID id);
+    Optional<Booking> findById(UUID id);
 
     List<Booking> findAll();
 

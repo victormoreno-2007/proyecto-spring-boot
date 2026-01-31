@@ -26,20 +26,26 @@ public class BookingRepositoryAdapter implements BookingRepositoryPort {
     }
 
     @Override
-    public Optional<Booking> findbyId(UUID id) {
+    public Optional<Booking> findById(UUID id) {
         return jpaBookingRepository.findById(id)
                 .map(bookingMapper::toDomain);
-    }
-
-    @Override
-    public List<Booking> finAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'finAll'");
     }
 
     @Override
     public List<Booking> findConflictingBookings(UUID toolId, LocalDateTime startDate, LocalDateTime endDate) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findConflictingBookings'");
+    }
+
+    @Override
+    public List<Booking> findByUserId(UUID userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByUserId'");
+    }
+
+    @Override
+    public List<Booking> findAll() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 }
