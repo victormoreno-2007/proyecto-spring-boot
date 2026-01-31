@@ -1,13 +1,13 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.damage;
 
-import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.DamageReportEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.DamageReportEntity;
+
 public interface JpaDamageReportRepository extends JpaRepository<DamageReportEntity, UUID> {
+    // Spring Data JPA crea automáticamente el query por nombre de método
     Optional<DamageReportEntity> findByBookingId(UUID bookingId);
 }
