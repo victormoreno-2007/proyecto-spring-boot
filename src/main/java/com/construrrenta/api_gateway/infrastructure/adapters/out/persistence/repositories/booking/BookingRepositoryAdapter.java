@@ -43,7 +43,7 @@ public class BookingRepositoryAdapter implements BookingRepositoryPort {
     }
 
     @Override
-    public Optional<Booking> findbyId(UUID id) {
+    public Optional<Booking> findById(UUID id) {
         return jpaBookingRepository.findById(id).map(bookingMapper::toDomain);
     }
 

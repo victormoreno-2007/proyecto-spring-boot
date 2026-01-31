@@ -1,7 +1,15 @@
 package com.construrrenta.api_gateway.infrastructure.security.config;
 
+import com.construrrenta.api_gateway.infrastructure.adapters.out.security.JwtTokenAdapter;
+import com.construrrenta.api_gateway.infrastructure.security.filters.JwtAuthenticationFilter;
+import com.construrrenta.api_gateway.infrastructure.security.filters.JwtValidationFilter;
+import com.construrrenta.api_gateway.infrastructure.security.services.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -11,32 +19,46 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.construrrenta.api_gateway.infrastructure.security.filters.JwtValidationFilter;
-
-
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-   private final JwtValidationFilter jwtValidationFilter; 
-
-    public SecurityConfig(JwtValidationFilter jwtValidationFilter) {
-        this.jwtValidationFilter = jwtValidationFilter;
-    }
+    private final JwtValidationFilter jwtValidationFilter;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtTokenAdapter jwtTokenAdapter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenAdapter);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
+
         http
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/api/v1/auth/**").permitAll(); 
+                auth.requestMatchers("/api/v1/auth/**").permitAll();
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                 auth.anyRequest().authenticated();
             })
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
+        
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean

@@ -101,7 +101,7 @@ class BookingServiceTest {
     @Test
     void registerReturn_ConDanios_GuardaReporte() {
         // Simulamos buscar la reserva
-        when(bookingRepositoryPort.findbyId(bookingId)).thenReturn(Optional.of(mockBooking));
+        when(bookingRepositoryPort.findById(bookingId)).thenReturn(Optional.of(mockBooking));
 
         // Ejecutamos la devolución con daños
         bookingService.registerReturn(bookingId, true, "Broca rota", new BigDecimal("20.00"));

@@ -22,10 +22,6 @@ public class AuthController {
         this.authUseCase = authUseCase;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginRequest request) { 
-        return ResponseEntity.ok(authUseCase.login(request.getEmail(), request.getPassword()));
-    }
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
         User newUser = User.create(
