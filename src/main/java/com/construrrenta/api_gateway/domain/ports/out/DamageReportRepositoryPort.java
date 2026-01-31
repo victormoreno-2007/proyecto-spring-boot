@@ -1,5 +1,6 @@
 package com.construrrenta.api_gateway.domain.ports.out;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,5 +13,7 @@ public interface DamageReportRepositoryPort {
     Optional<DamageReport> findById(UUID id);
     
     Optional<DamageReport> finBookingId(UUID bookingId);
+
+    List<DamageReport> findAll(); //trae todos los reportes
     
 }

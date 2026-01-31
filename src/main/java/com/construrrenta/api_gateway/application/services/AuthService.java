@@ -3,7 +3,6 @@ package com.construrrenta.api_gateway.application.services;
 import org.springframework.stereotype.Service;
 
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
-import com.construrrenta.api_gateway.domain.model.TokenDTO;
 import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.in.AuthUseCase;
 import com.construrrenta.api_gateway.domain.ports.out.PasswordPort;

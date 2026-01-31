@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,6 +82,13 @@ public class BookingController {
             request.getRepairCost()
         );
         return ResponseEntity.ok().build();
+    }
+    // NUEVO: 8. HISTORIAL SEGURO (Tu tarea específica)
+    // Extrae el ID del token automáticamente. No se le pasa por URL.
+    @GetMapping("/my-history")
+    public ResponseEntity<List<Booking>> getMyHistory(@AuthenticationPrincipal UUID userId) {
+        // @AuthenticationPrincipal inyecta el ID del usuario logueado gracias a tu JwtValidationFilter
+        return ResponseEntity.ok(manageBookingUseCase.getBookingsByUser(userId));
     }
 
     // ================= DTOs (Request Bodies) =================
