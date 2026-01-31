@@ -2,6 +2,7 @@ package com.construrrenta.api_gateway.infrastructure.adapters.in.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,8 +11,6 @@ import com.construrrenta.api_gateway.domain.model.user.Role;
 import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.in.AuthUseCase;
 import com.construrrenta.api_gateway.infrastructure.adapters.in.web.dto.RegisterRequest;
-
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/auth")

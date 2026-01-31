@@ -6,8 +6,12 @@ import java.util.UUID;
 
 import com.construrrenta.api_gateway.domain.model.tool.Tool;
 
+import com.construrrenta.api_gateway.domain.model.tool.ToolStatus;
+
 public interface ToolRepositoryPort {
-    Tool save(Tool tool);
-    Optional<Tool> findById(UUID id);
-    List<Tool> findAll();
+    Tool save(Tool tool);                     // Guardar una herramienta
+    Optional<Tool> findById(UUID id);         // Buscar por ID (Puede no existir, por eso Optional)
+    List<Tool> findAll();                     // Traer todas
+    List<Tool> findByStatus(ToolStatus status); // Filtrar (ej: Solo las DISPONIBLES)
+
 }
