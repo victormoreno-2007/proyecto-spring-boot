@@ -62,6 +62,22 @@ public class Booking {
         this.status = BookingStatus.CONFIRMED;
     }
 
+    // ... métodos existentes ...
+    public void complete() {
+        // Regla de negocio: Solo se puede completar si ya estaba confirmada
+        if (this.status != BookingStatus.CONFIRMED) {
+            throw new DomainException("Solo se pueden finalizar reservas que están confirmadas.");
+        }
+        this.status = BookingStatus.COMPLETED;
+    }
+    
+    public void cancel() {
+        if (this.status == BookingStatus.COMPLETED) {
+             throw new DomainException("No se puede cancelar una reserva ya finalizada.");
+        }
+        this.status = BookingStatus.CANCELLED;
+    }
+
     public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
     public UUID getToolId() { return toolId; }

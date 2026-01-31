@@ -11,9 +11,11 @@ public interface BookingRepositoryPort {
     
     Booking save(Booking booking);
 
+    List<Booking> findByUserId(UUID userId); 
+
     Optional<Booking> findbyId(UUID id);
 
-    List<Booking>finAll();
+    List<Booking> findAll();
 
     List<Booking> findConflictingBookings(UUID toolId, LocalDateTime startDate, LocalDateTime endDate);
 
