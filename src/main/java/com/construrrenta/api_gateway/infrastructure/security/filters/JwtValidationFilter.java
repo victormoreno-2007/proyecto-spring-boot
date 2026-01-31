@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Component
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-    private final TokenPort tokenPort; // Inyectamos la interfaz, no la implementación (DIP)
+    private final TokenPort tokenPort; 
 
     public JwtValidationFilter(TokenPort tokenPort) {
         this.tokenPort = tokenPort;
@@ -34,11 +35,14 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(jwt)) {
                 UUID userId = tokenPort.validateAccessToken(jwt);
-                // String email = tokenPort.extractEmail(jwt); // Se puede usar si se requiere
+            
+                String roleString = tokenPort.extractRole(jwt);
 
-                // Autenticación simple sin roles de BD por ahora
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + roleString);
+                List<SimpleGrantedAuthority> authorities = List.of(authority);
+                
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

@@ -19,9 +19,12 @@ public class JwtTokenAdapter implements TokenPort {
     private final SecretKey secretKey;
     private final Long accessTokenExpiration;
 
+    // ✅ CAMBIO CRÍTICO: Inyección segura desde application.properties
+    // Ya no usamos la clave "quemada" en el código.
     public JwtTokenAdapter(
-            @Value("${jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}") String secret,
-            @Value("${jwt.access-token-expiration:900000}") Long accessTokenExpiration) {
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration}") Long accessTokenExpiration) {
+        
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.accessTokenExpiration = accessTokenExpiration;
     }
@@ -32,11 +35,11 @@ public class JwtTokenAdapter implements TokenPort {
         Date expiryDate = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
-                .subject(userId.toString()) 
+                .subject(userId.toString())
                 .claim("email", email)
-                .claim("role", role.name())
-                .issuedAt(now)     
-                .expiration(expiryDate) 
+                .claim("role", role.name()) 
+                .issuedAt(now)
+                .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
     }
@@ -44,26 +47,36 @@ public class JwtTokenAdapter implements TokenPort {
     @Override
     public UUID validateAccessToken(String token) {
         try {
-           
             Claims claims = Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token) 
-                    .getPayload();           
-
-            return UUID.fromString(claims.getSubject());
-        } catch (Exception e) {
-            throw new RuntimeException("Token inválido", e);
-        }
-    }
-    
-    @Override
-    public String extractEmail(String token) {
-         Claims claims = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-         return claims.get("email", String.class);
+            return UUID.fromString(claims.getSubject());
+        } catch (Exception e) {
+            // ✅ LIMPIEZA: Quitamos el System.out.println para no ensuciar logs en producción
+            throw new RuntimeException("Token inválido o expirado", e);
+        }
+    }
+
+    @Override
+    public String extractEmail(String token) {
+        return extractClaim(token, "email");
+    }
+
+    // ✅ MANTENEMOS ESTO: Es vital para que el filtro de seguridad sepa si eres ADMIN
+    @Override
+    public String extractRole(String token) {
+        return extractClaim(token, "role");
+    }
+
+    // Método auxiliar para reutilizar lógica y no repetir código
+    private String extractClaim(String token, String claimName) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get(claimName, String.class);
     }
 }
