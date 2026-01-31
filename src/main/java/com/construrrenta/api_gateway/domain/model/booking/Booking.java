@@ -20,6 +20,17 @@ public class Booking {
 
     private Booking() {}
 
+    public Booking(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
+        this.id = id;
+        this.userId = userId;
+        this.toolId = toolId;
+        this.paymentId = paymentId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.totalPrice = totalPrice;
+        this.status = status;
+    }
+    
     public static Booking create(UUID userId, Tool tool, LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate.isAfter(endDate)) {
             throw new DomainException("La fecha de inicio no puede ser posterior al fin");
