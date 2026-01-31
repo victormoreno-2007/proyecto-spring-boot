@@ -119,4 +119,9 @@ public class BookingService implements ManageBookingUseCase {
 
         bookingRepositoryPort.save(booking);
     }
+
+    @Override
+    public List<DamageReport> getAllDamageReports() {
+        return damageReportRepositoryPort.findAll();
+    }
 }

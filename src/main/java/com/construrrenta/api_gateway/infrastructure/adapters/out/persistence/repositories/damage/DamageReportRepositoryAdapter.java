@@ -1,6 +1,8 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.damage;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -36,5 +38,12 @@ public class DamageReportRepositoryAdapter implements DamageReportRepositoryPort
     public Optional<DamageReport> finBookingId(UUID bookingId) {
         return jpaDamageReportRepository.findByBookingId(bookingId)
                 .map(damageReportMapper::toDomain);
+    }
+
+    @Override
+    public List<DamageReport> findAll() {
+        return jpaDamageReportRepository.findAll().stream()
+                .map(damageReportMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

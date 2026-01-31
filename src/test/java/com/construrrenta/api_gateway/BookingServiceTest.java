@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -115,5 +116,24 @@ class BookingServiceTest {
         
         // 3. Verificamos que se llamó al repositorio de daños para guardar el reporte
         verify(damageReportRepositoryPort).save(any(DamageReport.class));
+    }
+    @Test
+    void getAllDamageReports_DebeRetornarLista() {
+        // 1. ARRANGE (Preparar)
+        // Simulamos que el repositorio devuelve una lista con 1 reporte
+        DamageReport reporteSimulado = DamageReport.create("Motor quemado", new BigDecimal("50.00"), UUID.randomUUID());
+        when(damageReportRepositoryPort.findAll()).thenReturn(List.of(reporteSimulado));
+
+        // 2. ACT (Actuar)
+        var listaResultante = bookingService.getAllDamageReports();
+
+        // 3. ASSERT (Verificar)
+        assertNotNull(listaResultante);
+        assertFalse(listaResultante.isEmpty());
+        assertEquals(1, listaResultante.size());
+        assertEquals("Motor quemado", listaResultante.get(0).getDescription());
+        
+        // Verificamos que "El Cerebro" le pidió los datos al puerto
+        verify(damageReportRepositoryPort).findAll(); 
     }
 }
