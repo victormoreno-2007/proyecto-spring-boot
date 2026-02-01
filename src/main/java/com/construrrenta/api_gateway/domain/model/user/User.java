@@ -15,6 +15,15 @@ public class User {
     
     private User() {}
 
+    public User(UUID id, String firstName, String lastName, String email, String password, Role role) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+    
     public static User create(String email, String password, String firstName, String lastName, Role role) {
         if (email == null || !email.contains("@")) {
             throw new DomainException("El email es inválido");

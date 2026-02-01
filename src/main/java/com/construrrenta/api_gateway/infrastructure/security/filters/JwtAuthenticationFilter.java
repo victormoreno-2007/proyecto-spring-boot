@@ -1,19 +1,20 @@
 package com.construrrenta.api_gateway.infrastructure.security.filters;
 
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication; 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 import com.construrrenta.api_gateway.infrastructure.adapters.in.web.LoginRequest;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.security.JwtTokenAdapter;
-import com.construrrenta.api_gateway.infrastructure.security.model.SecurityUser; 
+import com.construrrenta.api_gateway.infrastructure.security.model.SecurityUser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -28,7 +29,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenAdapter jwtTokenAdapter) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenAdapter = jwtTokenAdapter;
-        setFilterProcessesUrl("/api/v1/auth/login"); 
+    }
+
+    @Override
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        return "POST".equalsIgnoreCase(request.getMethod()) && 
+               "/api/v1/auth/login".equals(request.getServletPath());
     }
 
     @Override

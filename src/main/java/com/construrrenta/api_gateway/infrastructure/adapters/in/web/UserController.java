@@ -7,11 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.construrrenta.api_gateway.domain.model.user.Role;
 import com.construrrenta.api_gateway.domain.model.user.User;
 import com.construrrenta.api_gateway.domain.ports.in.ManageUserUseCase;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,5 +40,30 @@ public class UserController {
     public ResponseEntity<User> deleteUser(@PathVariable UUID id) {
         manageUserUseCase.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
+        
+        
+        User newUser = new User(
+            null, 
+            request.getFirstName(),
+            request.getLastName(),
+            request.getEmail(),
+            request.getPassword(),
+            request.getRole()
+        );
+
+        return ResponseEntity.ok(manageUserUseCase.createUser(newUser));
+    }
+
+    // DTO interno para recibir los datos limpios desde el Frontend
+    @lombok.Data
+    public static class CreateUserRequest {
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String password;
+        private Role role; 
     }
 }
