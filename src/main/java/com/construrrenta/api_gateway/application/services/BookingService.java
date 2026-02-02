@@ -11,11 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
 import com.construrrenta.api_gateway.domain.model.damage.DamageReport;
+import com.construrrenta.api_gateway.domain.model.payment.Payment;
+import com.construrrenta.api_gateway.domain.model.payment.PaymentMethod;
 import com.construrrenta.api_gateway.domain.model.tool.Tool;
 import com.construrrenta.api_gateway.domain.model.tool.ToolStatus;
 import com.construrrenta.api_gateway.domain.ports.out.BookingRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.DamageReportRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.ManageBookingUseCase;
+import com.construrrenta.api_gateway.domain.ports.out.PaymentRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.ToolRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.UserRepositoryPort;
 
@@ -29,6 +32,7 @@ public class BookingService implements ManageBookingUseCase {
     private final ToolRepositoryPort toolRepositoryPort;
     private final UserRepositoryPort userRepositoryPort;
     private final DamageReportRepositoryPort damageReportRepositoryPort;
+    private final PaymentRepositoryPort paymentRepositoryPort;
 
     @Override
     @Transactional
@@ -93,9 +97,24 @@ public class BookingService implements ManageBookingUseCase {
 
     @Override
     @Transactional
-    public void confirmBookingPayment(UUID bookingId, UUID paymentId) {
+    public void confirmBookingPayment(UUID bookingId, UUID externalPaymentReference) {
         Booking booking = getBooking(bookingId);
-        booking.confirmPayment(paymentId);
+        
+        // 1. Crear el pago usando tu método 'create' (reglas de negocio)
+        Payment newPayment = Payment.create(
+            booking.getTotalPrice(), 
+            PaymentMethod.CREDIT_CARD, // Asumimos tarjeta por defecto en esta simulación
+            bookingId
+        );
+        
+        newPayment.complete(); // Lo marcamos como completado
+        
+        // 2. Guardar el pago en la base de datos (Usando el puerto que acabamos de inyectar)
+        Payment savedPayment = paymentRepositoryPort.save(newPayment);
+
+        // 3. Confirmar la reserva asociándole el ID del pago real
+        booking.confirmPayment(savedPayment.getId());
+        
         bookingRepositoryPort.save(booking);
     }
 

@@ -33,6 +33,19 @@ public class Payment {
         payment.bookingId = bookingId;
         return payment;
     }
+
+    // NUEVO MÉTODO: Para reconstruir el objeto desde la Base de Datos
+    public static Payment reconstruct(UUID id, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod method, PaymentStatus status, UUID bookingId) {
+        Payment payment = new Payment();
+        payment.id = id;
+        payment.amount = amount;
+        payment.paymentDate = paymentDate;
+        payment.method = method;
+        payment.status = status;
+        payment.bookingId = bookingId;
+        return payment;
+    }
+    
     public UUID getId() { return id; }
     public BigDecimal getAmount() { return amount; }
     public LocalDateTime getPaymentDate() { return paymentDate; }
