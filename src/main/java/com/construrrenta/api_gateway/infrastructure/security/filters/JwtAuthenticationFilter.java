@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
         return "POST".equalsIgnoreCase(request.getMethod()) && 
                "/api/v1/auth/login".equals(request.getServletPath());
-    }
+    } 
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, 
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     loginRequest.getPassword()
             );
 
-            return authenticationManager.authenticate(authToken);
+            return authenticationManager.authenticate(authToken); 
 
         } catch (IOException e) {
             throw new RuntimeException("Error al leer credenciales", e);
@@ -69,7 +69,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtTokenAdapter.generateAccessToken(
             domainUser.getId(),      
             domainUser.getEmail(),  
-            domainUser.getRole()   
+            domainUser.getRole(),
+            domainUser.getFirstName()
         );
 
         response.setContentType("application/json");

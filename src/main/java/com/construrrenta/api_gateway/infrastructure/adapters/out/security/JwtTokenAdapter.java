@@ -30,7 +30,7 @@ public class JwtTokenAdapter implements TokenPort {
     }
 
     @Override
-    public String generateAccessToken(UUID userId, String email, Role role) {
+    public String generateAccessToken(UUID userId, String email, Role role, String firstName) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + accessTokenExpiration);
 
@@ -38,6 +38,7 @@ public class JwtTokenAdapter implements TokenPort {
                 .subject(userId.toString())
                 .claim("email", email)
                 .claim("role", role.name()) 
+                .claim("firstName", firstName)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(secretKey)
