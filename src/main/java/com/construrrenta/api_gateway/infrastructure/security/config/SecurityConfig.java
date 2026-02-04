@@ -4,6 +4,8 @@ import com.construrrenta.api_gateway.infrastructure.adapters.out.security.JwtTok
 import com.construrrenta.api_gateway.infrastructure.security.filters.JwtAuthenticationFilter;
 import com.construrrenta.api_gateway.infrastructure.security.filters.JwtValidationFilter;
 import com.construrrenta.api_gateway.infrastructure.security.services.CustomUserDetailsService;
+
+import org.springframework.http.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +49,7 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/v1/auth/**").permitAll();
                 auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools/**").permitAll();
                 auth.anyRequest().authenticated();
             })
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
