@@ -28,11 +28,15 @@ public class BookingController {
 
     private final ManageBookingUseCase manageBookingUseCase;
 
-    // 1. CREAR RESERVA
+    // 1. CREAR RESERVA (CORREGIDO)
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request) {
+    public ResponseEntity<Booking> createBooking(
+        @AuthenticationPrincipal UUID userId, // <--- CAMBIO 1: El ID entra por aquí (del Token)
+        @RequestBody BookingRequest request
+    ) {
+        // CAMBIO 2: Usamos 'userId' directo, ignoramos request.getUserId()
         Booking booking = manageBookingUseCase.createBooking(
-            request.getUserId(),
+            userId, 
             request.getToolId(),
             request.getStartDate(),
             request.getEndDate()

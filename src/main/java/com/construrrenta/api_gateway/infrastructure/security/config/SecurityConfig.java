@@ -7,6 +7,7 @@ import com.construrrenta.api_gateway.infrastructure.security.services.CustomUser
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -44,6 +45,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools").permitAll();
                 auth.requestMatchers("/api/v1/auth/**").permitAll();
                 auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
@@ -76,7 +78,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); 
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:5173",
+            "http://localhost:5175"
+        )); 
+        
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
