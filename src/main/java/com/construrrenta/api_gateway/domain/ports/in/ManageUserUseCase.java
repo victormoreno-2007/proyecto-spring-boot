@@ -10,4 +10,5 @@ public interface ManageUserUseCase {
     User getUserById(UUID id);
     void deleteUser(UUID id);
     User createUser(User user);
+    User updateUser(UUID id, User userDetails);
 }

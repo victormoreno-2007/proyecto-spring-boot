@@ -22,5 +22,5 @@ public interface ManageBookingUseCase {
     void cancelBooking(UUID bookingId);
     void completeBooking(UUID bookingId);
     void registerReturn(UUID bookingId, boolean withDamage, String damageDescription, BigDecimal repairCost);
-    
+    void reportArrivalDamage(UUID bookingId, String description);
 }

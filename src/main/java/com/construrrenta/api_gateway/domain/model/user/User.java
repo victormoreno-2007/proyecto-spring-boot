@@ -57,4 +57,26 @@ public class User {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public Role getRole() { return role; }
+
+
+    public void updatePersonalInfo(String firstName, String lastName) {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new DomainException("El nombre es obligatorio");
+        }
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new DomainException("El apellido es obligatorio");
+        }
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+   
+    public void changePassword(String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new DomainException("La nueva contraseña no puede estar vacía");
+        }
+        this.password = newPassword;
+    }
+
 }
+
