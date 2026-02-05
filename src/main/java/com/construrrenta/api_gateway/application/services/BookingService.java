@@ -140,6 +140,35 @@ public class BookingService implements ManageBookingUseCase {
     }
 
     @Override
+    @Transactional
+    public void reportArrivalDamage(UUID bookingId, String descripcion){
+        Booking booking = getBooking(bookingId);
+
+        if (booking.getStatus() == com.construrrenta.api_gateway.domain.model.booking.BookingStatus.CANCELLED || 
+            booking.getStatus() == com.construrrenta.api_gateway.domain.model.booking.BookingStatus.COMPLETED)  {
+            throw new DomainException("No se puede reportar una reserva ya finalizada o cancelada.");
+        }
+
+        DamageReport report = DamageReport.create(
+            "REPORTE DE LLEGADA (CLIENTE): " + descripcion, 
+            BigDecimal.ZERO, 
+            bookingId
+        );
+
+        damageReportRepositoryPort.save(report);
+
+        booking.cancel();
+        bookingRepositoryPort.save(booking);
+
+        if (booking.getPaymentId() != null) {
+            paymentRepositoryPort.findById(booking.getPaymentId()).ifPresent(payment -> {
+                payment.refund();
+                paymentRepositoryPort.save(payment);
+            });
+        }
+    }
+
+    @Override
     public List<DamageReport> getAllDamageReports() {
         return damageReportRepositoryPort.findAll();
     }

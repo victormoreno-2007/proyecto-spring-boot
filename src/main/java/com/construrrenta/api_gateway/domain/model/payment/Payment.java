@@ -60,5 +60,8 @@ public class Payment {
     public void fail() {
         this.status = PaymentStatus.FAILED;
     }
+    public void refund() {
+        this.status = PaymentStatus.REFUNDED;
+    }
 
 }

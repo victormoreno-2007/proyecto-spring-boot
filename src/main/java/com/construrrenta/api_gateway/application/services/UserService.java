@@ -61,5 +61,24 @@ public class UserService implements ManageUserUseCase{
         userRepositoryPort.deleteById(id);
     }
 
+    @Override
+    public User updateUser(UUID id, User userDetails) {
+        User existingUser = userRepositoryPort.findById(id)
+                .orElseThrow(() -> new DomainException("Usuario no encontrado"));
+
+        // Actualizamos datos básicos usando el método de dominio
+        existingUser.updatePersonalInfo(
+            userDetails.getFirstName(), 
+            userDetails.getLastName()
+        );
+
+        // Si viene contraseña, se usea el método específico
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
+            String encodedPass = passwordEncoder.encode(userDetails.getPassword());
+            existingUser.changePassword(encodedPass);
+        }
+
+        return userRepositoryPort.save(existingUser);
+    }
 
 }

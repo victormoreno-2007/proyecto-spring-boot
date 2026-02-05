@@ -62,4 +62,9 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // Excluye del filtro de validación todo lo que sea auth (login, register, etc.)
+        return request.getServletPath().startsWith("/api/v1/auth"); 
+    }
 }

@@ -91,6 +91,17 @@ public class BookingController {
         return ResponseEntity.ok(manageBookingUseCase.getBookingsByUser(userId));
     }
 
+    // para hacer los registros de los daños
+    @PostMapping("/{id}/report-arrival-issue")
+    public ResponseEntity<Void> reportArrivalIssue(@PathVariable UUID id, @RequestBody ReturnRequest request) {
+        // Reusamos tu DTO 'ReturnRequest' porque ya tiene el campo 'damageDescription'
+        manageBookingUseCase.reportArrivalDamage(
+            id,
+            request.getDamageDescription()
+        );
+        return ResponseEntity.ok().build();
+    }
+
     // ================= DTOs (Request Bodies) =================
 
     // DTO para crear reserva
