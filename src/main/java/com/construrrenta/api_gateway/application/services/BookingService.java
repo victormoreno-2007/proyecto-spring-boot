@@ -50,10 +50,12 @@ public class BookingService implements ManageBookingUseCase {
         }
 
         List<Booking> conflicts = bookingRepositoryPort.findConflictingBookings(toolId, startDate, endDate);
-        if (!conflicts.isEmpty()) {
-            throw new DomainException("La herramienta ya está reservada en las fechas seleccionadas");
-        }
 
+        if (conflicts.size() >= tool.getStock()) {
+            throw new DomainException("No hay stock disponible para estas fechas. (Reservadas: " 
+            + conflicts.size() + "/" + tool.getStock() + ")");
+        }
+    
         Booking newBooking = Booking.create(userId, tool, startDate, endDate);
         return bookingRepositoryPort.save(newBooking);
     }

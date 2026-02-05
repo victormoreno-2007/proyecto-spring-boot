@@ -40,7 +40,8 @@ public class ToolController {
                 request.getDescription(),
                 request.getPricePerDay(),
                 request.getImageUrl(),
-                request.getProviderId() // <--- Usamos el ID real que viene del Postman
+                request.getProviderId(),
+                request.getStock() != null ? request.getStock() : 1
         );
 
         return ResponseEntity.ok(toolUseCase.createTool(newTool));
@@ -80,7 +81,8 @@ public class ToolController {
             request.getDescription(),
             request.getPricePerDay(),
             request.getImageUrl(),
-            safeProviderId // <--- Usamos el ID seguro, nunca null
+            safeProviderId,
+            request.getStock() != null ? request.getStock() : 1
         );
         
         return ResponseEntity.ok(toolUseCase.updateTool(id, toolUpdate));
@@ -97,8 +99,8 @@ public class ToolController {
         private String description;
         private BigDecimal pricePerDay;
         private String imageUrl;
-        private UUID providerId; // <--- Agrega esto
-
+        private UUID providerId; 
+        private Integer stock;
         // Constructor Vacío (Obligatorio para Jackson)
         public ToolRequest() {
         }
@@ -143,5 +145,8 @@ public class ToolController {
         public void setProviderId(UUID providerId) {
             this.providerId = providerId;
         }
+        public Integer getStock() { return stock; }
+        
+        public void setStock(Integer stock) { this.stock = stock; }
     }
 }

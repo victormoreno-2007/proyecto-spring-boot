@@ -64,7 +64,8 @@ public class ToolService implements ToolUseCase {
                 toolDetails.getPricePerDay(),
                 toolDetails.getImageUrl(),
                 toolDetails.getStatus(),
-                existingTool.getProviderId() // El dueño NO cambia
+                existingTool.getProviderId(), // El dueño NO cambia
+                toolDetails.getStock()
         );
 
         // 3. Guardamos

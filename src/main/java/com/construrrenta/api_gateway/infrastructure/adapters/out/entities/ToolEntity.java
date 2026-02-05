@@ -49,6 +49,9 @@ public class ToolEntity {
     @Column(name = "provider_id", nullable = false, columnDefinition = "BINARY(16)")
     private UUID providerId; // Relación lógica con User (Proveedor)
 
+    @Column(nullable = false, columnDefinition = "int default 1") 
+    private Integer stock;
+
     @PrePersist
     public void generateId() {
         if (this.id == null) {

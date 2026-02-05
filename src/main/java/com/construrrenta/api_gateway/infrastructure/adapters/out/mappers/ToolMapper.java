@@ -20,7 +20,8 @@ public interface ToolMapper {
         entity.getPricePerDay(), 
         entity.getImageUrl(), 
         entity.getStatus(), 
-        entity.getProviderId());
+        entity.getProviderId(),
+        entity.getStock());
 
     }
 }
