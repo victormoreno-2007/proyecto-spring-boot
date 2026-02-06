@@ -174,4 +174,9 @@ public class BookingService implements ManageBookingUseCase {
     public List<DamageReport> getAllDamageReports() {
         return damageReportRepositoryPort.findAll();
     }
+
+    @Override 
+    public List<Booking> getBookingsByProvider(UUID providerId) {
+        return bookingRepositoryPort.findByProviderId(providerId);
+    }
 }

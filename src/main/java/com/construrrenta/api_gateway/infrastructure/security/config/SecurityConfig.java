@@ -25,7 +25,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,12 +45,20 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools").permitAll();
+                // 1. REGLAS PÚBLICAS (Lo que cualquiera puede ver)
                 auth.requestMatchers("/api/v1/auth/**").permitAll();
+                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools/**").permitAll(); // Ver herramientas es público
+
+                // 2. REGLAS DE ROLES (Lo específico)
+                // Aquí va la línea que te causaba el error (ANTES del anyRequest)
+                auth.requestMatchers("/api/v1/bookings/provider/**").hasAnyRole("PROVIDER", "ADMIN");
+                
                 auth.requestMatchers(HttpMethod.PUT, "/users/**").authenticated();
                 auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
-                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools/**").permitAll();
+
+                // 3. EL CIERRE (El "Else" final)
+                // Esto SIEMPRE debe ir al final. Nada puede ir después de esta línea.
                 auth.anyRequest().authenticated();
             })
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -68,7 +75,6 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
-        
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
@@ -85,7 +91,6 @@ public class SecurityConfig {
             "http://localhost:5173",
             "http://localhost:5175"
         )); 
-        
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

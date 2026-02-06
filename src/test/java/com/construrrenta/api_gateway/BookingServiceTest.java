@@ -61,7 +61,7 @@ class BookingServiceTest {
         // Preparamos una herramienta de prueba
         mockTool = Tool.reconstruct(
             toolId, "Taladro", "Potente", new BigDecimal("50.00"), 
-            "img.jpg", ToolStatus.AVAILABLE, UUID.randomUUID()
+            "img.jpg", ToolStatus.AVAILABLE, UUID.randomUUID(),10
         );
         
         // Preparamos una reserva de prueba

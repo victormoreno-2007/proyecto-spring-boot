@@ -22,4 +22,6 @@ public interface JpaBookingRepository extends JpaRepository<BookingEntity, UUID>
         @Param("startDate") LocalDateTime startDate, 
         @Param("endDate") LocalDateTime endDate
     );
+    @Query("SELECT b FROM BookingEntity b WHERE b.tool.providerId = :providerId")
+    List<BookingEntity> findByProviderId(@Param("providerId") UUID providerId);
 }

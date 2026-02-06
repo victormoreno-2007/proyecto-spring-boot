@@ -67,5 +67,12 @@ public class BookingRepositoryAdapter implements BookingRepositoryPort {
                 .map(bookingMapper::toDomain)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<Booking> findByProviderId(UUID providerId) {
+        return jpaBookingRepository.findByProviderId(providerId)
+                .stream()
+                .map(bookingMapper::toDomain)
+                .toList();
+    }
 
 }

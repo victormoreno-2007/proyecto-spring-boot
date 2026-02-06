@@ -1,6 +1,5 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.in.web;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,18 +22,16 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
-
 public class BookingController {
 
     private final ManageBookingUseCase manageBookingUseCase;
 
-    // 1. CREAR RESERVA (CORREGIDO)
+    // 1. CREAR RESERVA
     @PostMapping
     public ResponseEntity<Booking> createBooking(
-        @AuthenticationPrincipal UUID userId, // <--- CAMBIO 1: El ID entra por aquí (del Token)
+        @AuthenticationPrincipal UUID userId,
         @RequestBody BookingRequest request
     ) {
-        // CAMBIO 2: Usamos 'userId' directo, ignoramos request.getUserId()
         Booking booking = manageBookingUseCase.createBooking(
             userId, 
             request.getToolId(),
@@ -69,14 +66,14 @@ public class BookingController {
         return ResponseEntity.ok().build();
     }
 
-    // 6. CONFIRMAR PAGO (Simulación - Lo llamaría Víctor tras pagar)
+    // 6. CONFIRMAR PAGO
     @PostMapping("/{id}/confirm-payment")
     public ResponseEntity<Void> confirmPayment(@PathVariable UUID id, @RequestBody PaymentConfirmationRequest request) {
         manageBookingUseCase.confirmBookingPayment(id, request.getPaymentId());
         return ResponseEntity.ok().build();
     }
 
-    // 7. FINALIZAR / DEVOLVER HERRAMIENTA (¡La joya de la corona!)
+    // 7. FINALIZAR / DEVOLVER HERRAMIENTA
     @PostMapping("/{id}/return")
     public ResponseEntity<Void> returnTool(@PathVariable UUID id, @RequestBody ReturnRequest request) {
         manageBookingUseCase.registerReturn(
@@ -87,18 +84,22 @@ public class BookingController {
         );
         return ResponseEntity.ok().build();
     }
-    // NUEVO: 8. HISTORIAL SEGURO (Tu tarea específica)
-    // Extrae el ID del token automáticamente. No se le pasa por URL.
+
+    // 8. HISTORIAL SEGURO (Cliente)
     @GetMapping("/my-history")
     public ResponseEntity<List<Booking>> getMyHistory(@AuthenticationPrincipal UUID userId) {
-        // @AuthenticationPrincipal inyecta el ID del usuario logueado gracias a tu JwtValidationFilter
         return ResponseEntity.ok(manageBookingUseCase.getBookingsByUser(userId));
     }
+    
+    // OBTENER RESERVAS DE UN PROVEEDOR (Gestión de Alquileres)
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<List<Booking>> getProviderBookings(@PathVariable UUID providerId) {
+        return ResponseEntity.ok(manageBookingUseCase.getBookingsByProvider(providerId));
+    }
 
-    // para hacer los registros de los daños
+    // 10. REPORTAR DAÑO AL RECIBIR (Cliente)
     @PostMapping("/{id}/report-arrival-issue")
     public ResponseEntity<Void> reportArrivalIssue(@PathVariable UUID id, @RequestBody ReturnRequest request) {
-        // Reusamos tu DTO 'ReturnRequest' porque ya tiene el campo 'damageDescription'
         manageBookingUseCase.reportArrivalDamage(
             id,
             request.getDamageDescription()
@@ -106,9 +107,7 @@ public class BookingController {
         return ResponseEntity.ok().build();
     }
 
-    // ================= DTOs (Request Bodies) =================
 
-    // DTO para crear reserva
     public static class BookingRequest {
         private UUID userId;
         private UUID toolId;
@@ -125,14 +124,12 @@ public class BookingController {
         public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }
     }
 
-    // DTO para confirmar pago
     public static class PaymentConfirmationRequest {
         private UUID paymentId;
         public UUID getPaymentId() { return paymentId; }
         public void setPaymentId(UUID paymentId) { this.paymentId = paymentId; }
     }
 
-    // DTO para devolución
     public static class ReturnRequest {
         private boolean withDamage;
         private String damageDescription;
