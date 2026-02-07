@@ -52,6 +52,7 @@ public class SecurityConfig {
 
                 // 2. REGLAS DE ROLES (Lo específico)
                 // Aquí va la línea que te causaba el error (ANTES del anyRequest)
+                auth.requestMatchers("/api/v1/admin/reports/**").hasRole("ADMIN");
                 auth.requestMatchers("/api/v1/bookings/provider/**").hasAnyRole("PROVIDER", "ADMIN");
                 
                 auth.requestMatchers(HttpMethod.PUT, "/users/**").authenticated();

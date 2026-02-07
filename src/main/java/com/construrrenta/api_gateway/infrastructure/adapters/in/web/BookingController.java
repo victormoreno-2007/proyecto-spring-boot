@@ -107,6 +107,18 @@ public class BookingController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<Void> approveBooking(@PathVariable UUID id) {
+        manageBookingUseCase.approveBooking(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Void> rejectBooking(@PathVariable UUID id) {
+        manageBookingUseCase.rejectBooking(id);
+        return ResponseEntity.ok().build();
+    }
+
 
     public static class BookingRequest {
         private UUID userId;
@@ -125,9 +137,9 @@ public class BookingController {
     }
 
     public static class PaymentConfirmationRequest {
-        private UUID paymentId;
-        public UUID getPaymentId() { return paymentId; }
-        public void setPaymentId(UUID paymentId) { this.paymentId = paymentId; }
+        private String paymentId;
+        public String getPaymentId() { return paymentId; }
+        public void setPaymentId(String paymentId) { this.paymentId = paymentId; }
     }
 
     public static class ReturnRequest {

@@ -11,7 +11,7 @@ import com.construrrenta.api_gateway.domain.model.tool.Tool;
 public class Booking {
     private UUID id;
     private UUID userId;    
-    private UUID toolId;    
+    private Tool tool;    
     private UUID paymentId; // Referencia al pago (Víctor) - Opcional al inicio
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -23,7 +23,7 @@ public class Booking {
     public Booking(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
         this.id = id;
         this.userId = userId;
-        this.toolId = toolId;
+        this.tool = tool;
         this.paymentId = paymentId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -41,7 +41,7 @@ public class Booking {
         Booking booking = new Booking();
         booking.id = UUID.randomUUID();
         booking.userId = userId;
-        booking.toolId = tool.getId();
+        booking.tool = tool;
         booking.startDate = startDate;
         booking.endDate = endDate;
         booking.status = BookingStatus.PENDING; // Nace pendiente de pago
@@ -54,11 +54,11 @@ public class Booking {
 
         return booking;
     }
-    public static Booking reconstruct(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
+    public static Booking reconstruct(UUID id, UUID userId, Tool tool, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
         Booking booking = new Booking();
         booking.id = id;
         booking.userId = userId;
-        booking.toolId = toolId;
+        booking.tool = tool;
         booking.paymentId = paymentId;
         booking.startDate = startDate;
         booking.endDate = endDate;
@@ -88,10 +88,14 @@ public class Booking {
         }
         this.status = BookingStatus.CANCELLED;
     }
+    public void approve() {
+        this.status = BookingStatus.CONFIRMED; 
+    }
 
     public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
-    public UUID getToolId() { return toolId; }
+    public Tool getTool() { return tool; }
+    public UUID getToolId() { return tool != null ? tool.getId() : null; }
     public UUID getPaymentId() { return paymentId; }
     public LocalDateTime getStartDate() { return startDate; }
     public LocalDateTime getEndDate() { return endDate; }

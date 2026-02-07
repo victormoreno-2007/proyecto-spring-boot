@@ -14,9 +14,11 @@ public interface ManageBookingUseCase {
     List<Booking> getAllBookings();
     void cancelBooking(UUID bookingId);
     void completeBooking(UUID bookingId);
-    void confirmBookingPayment(UUID bookingId, UUID externalPaymentReference);
+    void confirmBookingPayment(UUID bookingId, String externalPaymentReference);
     void reportArrivalDamage(UUID bookingId, String descripcion);
     void registerReturn(UUID bookingId, boolean withDamage, String damageDescription, BigDecimal repairCost);
     List<DamageReport> getAllDamageReports();
     List<Booking> getBookingsByProvider(UUID providerId);
+    void approveBooking(UUID bookingId); 
+    void rejectBooking(UUID bookingId);
 }

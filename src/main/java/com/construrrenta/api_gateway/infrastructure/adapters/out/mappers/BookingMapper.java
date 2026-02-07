@@ -1,22 +1,28 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.mappers;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.BookingEntity;
+import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.ToolEntity;
+import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.UserEntity;
 
-@Mapper(componentModel = "spring")
-public interface BookingMapper {
+import lombok.RequiredArgsConstructor;
 
-    @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "toolId", source = "tool.id")
-    default Booking toDomain(BookingEntity entity) {
+@Component
+@RequiredArgsConstructor
+public class BookingMapper {
+
+    // Inyectamos el ToolMapper para poder convertir la herramienta completa (con foto y nombre)
+    private final ToolMapper toolMapper; 
+
+    public Booking toDomain(BookingEntity entity) {
         if (entity == null) return null;
+
         return Booking.reconstruct(
             entity.getId(),
             entity.getUser().getId(),
-            entity.getTool().getId(),
+            entity.getTool() != null ? toolMapper.toDomain(entity.getTool()) : null,
             entity.getPaymentId(),
             entity.getStartDate(),
             entity.getEndDate(),
@@ -25,8 +31,18 @@ public interface BookingMapper {
         );
     }
 
-    @Mapping(target = "user", ignore = true) 
-    @Mapping(target = "tool", ignore = true)
-    BookingEntity toEntity(Booking booking);
-    
+    public BookingEntity toEntity(Booking domain) {
+        if (domain == null) return null;
+
+        return BookingEntity.builder()
+                .id(domain.getId())
+                .user(UserEntity.builder().id(domain.getUserId()).build())
+                .tool(ToolEntity.builder().id(domain.getToolId()).build())
+                .startDate(domain.getStartDate())
+                .endDate(domain.getEndDate())
+                .totalPrice(domain.getTotalPrice())
+                .status(domain.getStatus())
+                .paymentId(domain.getPaymentId())
+                .build();
+    }
 }

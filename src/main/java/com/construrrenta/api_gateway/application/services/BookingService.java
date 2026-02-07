@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
+import com.construrrenta.api_gateway.domain.model.booking.BookingStatus;
 import com.construrrenta.api_gateway.domain.model.damage.DamageReport;
 import com.construrrenta.api_gateway.domain.model.payment.Payment;
 import com.construrrenta.api_gateway.domain.model.payment.PaymentMethod;
@@ -99,7 +100,7 @@ public class BookingService implements ManageBookingUseCase {
 
     @Override
     @Transactional
-    public void confirmBookingPayment(UUID bookingId, UUID externalPaymentReference) {
+    public void confirmBookingPayment(UUID bookingId, String externalPaymentReference) {
         Booking booking = getBooking(bookingId);
         
         // 1. Crear el pago usando tu método 'create' (reglas de negocio)
@@ -178,5 +179,33 @@ public class BookingService implements ManageBookingUseCase {
     @Override 
     public List<Booking> getBookingsByProvider(UUID providerId) {
         return bookingRepositoryPort.findByProviderId(providerId);
+    }
+
+    @Override
+    @Transactional
+    public void approveBooking(UUID bookingId) {
+        Booking booking = getBooking(bookingId);
+        
+        // Regla: Solo se aprueban las que ya pagó el cliente (CONFIRMED) o están pendientes
+        if (booking.getStatus() != BookingStatus.CONFIRMED && booking.getStatus() != BookingStatus.PENDING) {
+            throw new DomainException("No se puede aprobar una reserva en estado " + booking.getStatus());
+        }
+
+        booking.approve();
+        bookingRepositoryPort.save(booking);
+    }
+    @Override
+    @Transactional
+    public void rejectBooking(UUID bookingId) {
+        Booking booking = getBooking(bookingId);
+        if (booking.getStatus() == BookingStatus.COMPLETED || booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new DomainException("No se puede rechazar una reserva ya finalizada");
+        }
+        
+        // Al rechazar, liberamos stock (si estuviera reservado) y devolvemos dinero (lógica de reembolso)
+        booking.cancel(); 
+        bookingRepositoryPort.save(booking);
+        
+        // Opcional: Lógica de reembolso de pago aquí
     }
 }
