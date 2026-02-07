@@ -13,4 +13,5 @@ public interface ToolUseCase {
     Tool updateTool(UUID id, Tool toolDetails);
     void deleteTool(UUID id);
     Tool getToolById(UUID id); // Útil para detalles
+    List<Tool> searchTools(String name);
 }

@@ -72,4 +72,8 @@ public class ToolService implements ToolUseCase {
         return toolRepositoryPort.save(updatedTool);
     }
 
+    @Override
+    public List<Tool> searchTools(String name) {
+        return toolRepositoryPort.searchToolsByName(name);
+    }
 }

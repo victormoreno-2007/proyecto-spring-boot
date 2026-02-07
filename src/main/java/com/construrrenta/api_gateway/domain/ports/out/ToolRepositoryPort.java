@@ -15,4 +15,5 @@ public interface ToolRepositoryPort {
     List<Tool> findByStatus(ToolStatus status); // Filtrar (ej: Solo las DISPONIBLES)
     List<Tool> findByProviderId(UUID providerId); // Para ver MIS herramientas
     void deleteById(UUID id);
+    List<Tool> searchToolsByName(String name);
 }

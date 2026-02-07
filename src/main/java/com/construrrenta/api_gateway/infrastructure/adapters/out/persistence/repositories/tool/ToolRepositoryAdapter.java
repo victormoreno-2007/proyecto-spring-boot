@@ -65,4 +65,13 @@ public class ToolRepositoryAdapter implements ToolRepositoryPort {
             jpaToolRepository.deleteById(id);
         }
     }
+
+    @Override
+    public List<Tool> searchToolsByName(String name) {
+        return jpaToolRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(toolMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+    
 }

@@ -12,4 +12,5 @@ public interface JpaToolRepository extends JpaRepository<ToolEntity, UUID> {
     // Spring crea el SQL automático: SELECT * FROM tools WHERE status = ?
     List<ToolEntity> findByStatus(ToolStatus status);
     List<ToolEntity> findByProviderId(UUID providerId);
+    List<ToolEntity> findByNameContainingIgnoreCase(String name);
 }

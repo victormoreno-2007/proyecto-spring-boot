@@ -2,9 +2,7 @@ package com.construrrenta.api_gateway.infrastructure.adapters.in.web;
 
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
 import com.construrrenta.api_gateway.domain.model.booking.BookingStatus;
-import com.construrrenta.api_gateway.domain.model.payment.Payment;
 import com.construrrenta.api_gateway.domain.ports.out.BookingRepositoryPort;
-import com.construrrenta.api_gateway.domain.ports.out.PaymentRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.UserRepositoryPort;
 import lombok.Builder;
 import lombok.Data;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.construrrenta.api_gateway.domain.model.tool.Tool;
@@ -91,6 +92,10 @@ public class ToolController {
     @GetMapping("/{id}")
     public ResponseEntity<Tool> getToolById(@PathVariable UUID id) {
         return ResponseEntity.ok(toolUseCase.getToolById(id));
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<Tool>> searchTools(@RequestParam String name) {
+        return ResponseEntity.ok(toolUseCase.searchTools(name));
     }
 
     // 👇 CLASE MANUAL (Sin @Data para evitar errores de Lombok)
