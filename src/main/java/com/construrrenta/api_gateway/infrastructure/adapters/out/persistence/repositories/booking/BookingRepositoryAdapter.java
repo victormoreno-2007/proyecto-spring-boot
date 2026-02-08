@@ -14,6 +14,8 @@ import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.Bookin
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.ToolEntity;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.entities.UserEntity;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.mappers.BookingMapper;
+import com.construrrenta.api_gateway.infrastructure.adapters.out.mappers.ToolMapper;
+import com.construrrenta.api_gateway.infrastructure.adapters.out.mappers.UserMapper;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.tool.JpaToolRepository;
 import com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.user.JpaUserRepository;
 
@@ -29,6 +31,8 @@ public class BookingRepositoryAdapter implements BookingRepositoryPort {
     private final JpaUserRepository jpaUserRepository;
     private final JpaToolRepository jpaToolRepository;
     private final BookingMapper bookingMapper;
+    private final ToolMapper toolMapper;
+    private final UserMapper userMapper;
     
     @Override
     public Booking save(Booking booking) {
@@ -75,4 +79,17 @@ public class BookingRepositoryAdapter implements BookingRepositoryPort {
                 .toList();
     }
 
+    @Override
+    public List<com.construrrenta.api_gateway.domain.model.tool.Tool> findTopTools() {
+        return jpaBookingRepository.findTopRentedTools().stream()
+                .map(toolMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<com.construrrenta.api_gateway.domain.model.user.User> findTopUsers() {
+        return jpaBookingRepository.findTopCustomers().stream()
+                .map(userMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

@@ -24,4 +24,12 @@ public interface JpaBookingRepository extends JpaRepository<BookingEntity, UUID>
     );
     @Query("SELECT b FROM BookingEntity b WHERE b.tool.providerId = :providerId")
     List<BookingEntity> findByProviderId(@Param("providerId") UUID providerId);
+
+    // Cuenta cuántas veces aparece cada herramienta en reservas
+    @Query("SELECT b.tool FROM BookingEntity b GROUP BY b.tool ORDER BY COUNT(b) DESC")
+    List<com.construrrenta.api_gateway.infrastructure.adapters.out.entities.ToolEntity> findTopRentedTools();
+
+    // Cuenta cuántas reservas ha hecho cada usuario
+    @Query("SELECT b.user FROM BookingEntity b GROUP BY b.user ORDER BY COUNT(b) DESC")
+    List<com.construrrenta.api_gateway.infrastructure.adapters.out.entities.UserEntity> findTopCustomers();
 }

@@ -1,5 +1,6 @@
 package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.payment;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,5 +37,10 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort{
         return jpaPaymentRepository.findByBookingId(bookingId).map(paymentMapper::toDomain);
     }
 
-    
+    @Override
+    public List<Payment> findAll() {
+        return jpaPaymentRepository.findAll().stream()
+                .map(paymentMapper::toDomain)
+                .toList();
+    }
 }

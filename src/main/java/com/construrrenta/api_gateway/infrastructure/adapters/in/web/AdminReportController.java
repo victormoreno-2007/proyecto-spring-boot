@@ -44,6 +44,15 @@ public class AdminReportController {
                 .totalRevenue(totalRevenue)
                 .build());
     }
+    @GetMapping("/top-tools")
+    public ResponseEntity<List<com.construrrenta.api_gateway.domain.model.tool.Tool>> getTopTools() {
+        return ResponseEntity.ok(bookingRepositoryPort.findTopTools());
+    }
+
+    @GetMapping("/top-users")
+    public ResponseEntity<List<com.construrrenta.api_gateway.domain.model.user.User>> getTopUsers() {
+        return ResponseEntity.ok(bookingRepositoryPort.findTopUsers());
+    }
 
     // DTO simple para enviar la respuesta
     @Data
