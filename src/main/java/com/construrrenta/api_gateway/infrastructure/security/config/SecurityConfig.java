@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // <--- NUEVO
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // <--- ESTO ACTIVA @PreAuthorize EN LOS CONTROLADORES
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -45,21 +47,23 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
-                // 1. REGLAS PÚBLICAS (Lo que cualquiera puede ver)
+
                 auth.requestMatchers("/api/v1/auth/**").permitAll();
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools/**").permitAll(); // Ver herramientas es público
+                auth.requestMatchers(HttpMethod.GET, "/api/v1/tools/**").permitAll(); 
 
-                // 2. REGLAS DE ROLES (Lo específico)
-                // Aquí va la línea que te causaba el error (ANTES del anyRequest)
-                auth.requestMatchers("/api/v1/admin/reports/**").hasRole("ADMIN");
+                // 2. PERFIL DE USUARIO 
+                
+                auth.requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated();
+
+                // 3. ADMINISTRACIÓN 
+                auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN"); 
+                auth.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
+
+                // 4. PROVEEDORES 
                 auth.requestMatchers("/api/v1/bookings/provider/**").hasAnyRole("PROVIDER", "ADMIN");
                 
-                auth.requestMatchers(HttpMethod.PUT, "/users/**").authenticated();
-                auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
-
-                // 3. EL CIERRE (El "Else" final)
-                // Esto SIEMPRE debe ir al final. Nada puede ir después de esta línea.
+                // 5. TODO LO DEMÁS
                 auth.anyRequest().authenticated();
             })
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
