@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.construrrenta.api_gateway.domain.exceptions.DomainException;
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
+import com.construrrenta.api_gateway.domain.model.booking.BookingReturnStatus;
 import com.construrrenta.api_gateway.domain.model.booking.BookingStatus;
 import com.construrrenta.api_gateway.domain.model.damage.DamageReport;
 import com.construrrenta.api_gateway.domain.model.payment.Payment;
@@ -22,6 +23,7 @@ import com.construrrenta.api_gateway.domain.ports.out.ManageBookingUseCase;
 import com.construrrenta.api_gateway.domain.ports.out.PaymentRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.ToolRepositoryPort;
 import com.construrrenta.api_gateway.domain.ports.out.UserRepositoryPort;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +59,7 @@ public class BookingService implements ManageBookingUseCase {
             + conflicts.size() + "/" + tool.getStock() + ")");
         }
     
-        Booking newBooking = Booking.create(userId, tool, startDate, endDate);
+        Booking newBooking = Booking.create(userId, tool, startDate, endDate, null);
         return bookingRepositoryPort.save(newBooking);
     }
 
@@ -124,22 +126,30 @@ public class BookingService implements ManageBookingUseCase {
     @Override
     @Transactional
     public void registerReturn(UUID bookingId, boolean withDamage, String damageDescription, BigDecimal repairCost) {
-        Booking booking = getBooking(bookingId);
-        
-        // Finalizamos la reserva
-        booking.complete(); 
 
-        if (withDamage) {
-            DamageReport report = DamageReport.create(damageDescription, repairCost, bookingId);
-            damageReportRepositoryPort.save(report);
-            
-            // Opcional: Cambiar estado de herramienta a MANTENIMIENTO si lo deseas
-            // Tool tool = toolRepositoryPort.findById(booking.getToolId()).orElseThrow();
-            // tool.setStatus(ToolStatus.MAINTENANCE);
-            // toolRepositoryPort.save(tool);
+        Booking booking = bookingRepositoryPort.findById(bookingId).orElseThrow(() -> new DomainException("Reserva no encontrada"));
+
+        if (booking.getReturnStatus() != BookingReturnStatus.PENDING_RETURN){ throw new DomainException("ESta reserva ya fue procesada anteriormente");}
+
+        if (withDamage) {booking.setReturnStatus(BookingReturnStatus.RETURNED_WITH_DAMAGE);
+
+        booking.setStatus(BookingStatus.COMPLETED);
+
+        DamageReport report = new DamageReport();
+            report.setBookingId(bookingId);
+            report.setDescription(damageDescription);
+            report.setRepairCost(repairCost);
+
+        report.setReportDate(LocalDateTime.now());
+
+        damageReportRepositoryPort.save(report);
+        } else {booking.setReturnStatus(BookingReturnStatus.RETURNED_OK);
+
+            booking.setStatus(BookingStatus.COMPLETED);
         }
 
         bookingRepositoryPort.save(booking);
+
     }
 
     @Override
@@ -208,4 +218,5 @@ public class BookingService implements ManageBookingUseCase {
         
         // Opcional: Lógica de reembolso de pago aquí
     }
+    
 }

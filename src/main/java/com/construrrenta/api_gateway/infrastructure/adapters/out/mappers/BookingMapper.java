@@ -27,7 +27,8 @@ public class BookingMapper {
             entity.getStartDate(),
             entity.getEndDate(),
             entity.getTotalPrice(),
-            entity.getStatus()
+            entity.getStatus(),
+            entity.getReturnStatus()
         );
     }
 
@@ -43,6 +44,7 @@ public class BookingMapper {
                 .totalPrice(domain.getTotalPrice())
                 .status(domain.getStatus())
                 .paymentId(domain.getPaymentId())
+                .returnStatus(domain.getReturnStatus())
                 .build();
     }
 }

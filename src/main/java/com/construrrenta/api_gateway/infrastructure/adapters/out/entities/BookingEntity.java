@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.construrrenta.api_gateway.domain.model.booking.BookingReturnStatus;
 import com.construrrenta.api_gateway.domain.model.booking.BookingStatus;
 
 import jakarta.persistence.Column;
@@ -58,6 +59,13 @@ public class BookingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private BookingReturnStatus returnStatus = BookingReturnStatus.PENDING_RETURN;
+
+    public BookingReturnStatus getReturnStatus(){ return returnStatus; }
+    
+    public void setReturnStatus(BookingReturnStatus returnStatus) { this.returnStatus = returnStatus; }
 
     @PrePersist
     public void generateId() {

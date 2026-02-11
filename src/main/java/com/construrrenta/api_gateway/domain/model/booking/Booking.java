@@ -17,21 +17,22 @@ public class Booking {
     private LocalDateTime endDate;
     private BigDecimal totalPrice;
     private BookingStatus status;
+    private BookingReturnStatus returnStatus;
 
     private Booking() {}
 
-    public Booking(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
+    public Booking(UUID id, UUID userId, UUID toolId, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status, BookingReturnStatus returnStatus) {
         this.id = id;
         this.userId = userId;
-        this.tool = tool;
         this.paymentId = paymentId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = totalPrice;
         this.status = status;
+        this.returnStatus = returnStatus;
     }
     
-    public static Booking create(UUID userId, Tool tool, LocalDateTime startDate, LocalDateTime endDate) {
+    public static Booking create(UUID userId, Tool tool, LocalDateTime startDate, LocalDateTime endDate, BookingReturnStatus returnStatus) {
         if (startDate.isAfter(endDate)) {
             throw new DomainException("La fecha de inicio no puede ser posterior al fin");
         }
@@ -47,6 +48,8 @@ public class Booking {
         booking.status = BookingStatus.PENDING; // Nace pendiente de pago
         booking.paymentId = null;
 
+        booking.returnStatus = BookingReturnStatus.PENDING_RETURN;
+
         long days = ChronoUnit.DAYS.between(startDate, endDate);
         if (days < 1) days = 1; 
         
@@ -54,7 +57,7 @@ public class Booking {
 
         return booking;
     }
-    public static Booking reconstruct(UUID id, UUID userId, Tool tool, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status) {
+    public static Booking reconstruct(UUID id, UUID userId, Tool tool, UUID paymentId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal totalPrice, BookingStatus status, BookingReturnStatus returnStatus) {
         Booking booking = new Booking();
         booking.id = id;
         booking.userId = userId;
@@ -64,6 +67,7 @@ public class Booking {
         booking.endDate = endDate;
         booking.totalPrice = totalPrice;
         booking.status = status;
+        booking.returnStatus = returnStatus;
         return booking;
     }
 
@@ -101,6 +105,13 @@ public class Booking {
     public LocalDateTime getEndDate() { return endDate; }
     public BigDecimal getTotalPrice() { return totalPrice; }
     public BookingStatus getStatus() { return status; }
+    
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    public BookingReturnStatus getReturnStatus() {   return returnStatus; }
+    public void setReturnStatus(BookingReturnStatus returnStatus) { this.returnStatus = returnStatus;}
 
 
 

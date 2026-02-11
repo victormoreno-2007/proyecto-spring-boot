@@ -53,6 +53,30 @@ public class DamageReport {
     public LocalDateTime getReportDate() { return reportDate; }
     public boolean isRepaired() { return isRepaired; }
     public UUID getBookingId() { return bookingId; }
+    
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRepairCost(BigDecimal repairCost) {
+        this.repairCost = repairCost;
+    }
+
+    public void setReportDate(LocalDateTime reportDate) {
+        this.reportDate = reportDate;
+    }
+
+    public void setRepaired(boolean isRepaired) {
+        this.isRepaired = isRepaired;
+    }
+
+    public void setBookingId(UUID bookingId) {
+        this.bookingId = bookingId;
+    }
 
     public void markAsRepaired() {
         this.isRepaired = true;

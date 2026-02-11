@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.construrrenta.api_gateway.infrastructure.adapters.in.web.dto.DevolucionDTO;
 
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
 import com.construrrenta.api_gateway.domain.ports.out.ManageBookingUseCase;
@@ -73,6 +74,7 @@ public class BookingController {
         return ResponseEntity.ok().build();
     }
 
+
     // 7. FINALIZAR / DEVOLVER HERRAMIENTA
     @PostMapping("/{id}/return")
     public ResponseEntity<Void> returnTool(@PathVariable UUID id, @RequestBody ReturnRequest request) {
@@ -118,6 +120,31 @@ public class BookingController {
         manageBookingUseCase.rejectBooking(id);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{id}/registrar-devolucion")
+    public ResponseEntity<Void> registrarDevolucion(
+            @PathVariable UUID id,
+            @RequestBody DevolucionDTO dto
+    ) {
+    
+        boolean withDamage = "DAÑOS".equalsIgnoreCase(dto.getEstado());
+
+        BigDecimal repairCost = (dto.getCostoReparacion() != null)
+                ? BigDecimal.valueOf(dto.getCostoReparacion())
+                : BigDecimal.ZERO;
+    
+        manageBookingUseCase.registerReturn(
+            id,
+            withDamage,
+            dto.getDescripcionDano(),
+            repairCost
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+
+
 
 
     public static class BookingRequest {
