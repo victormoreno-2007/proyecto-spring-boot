@@ -1,30 +1,31 @@
 package com.construrrenta.api_gateway.infrastructure.security.filters;
 
-import com.construrrenta.api_gateway.domain.ports.out.TokenPort;
+import com.construrrenta.api_gateway.infrastructure.adapters.out.security.JwtTokenAdapter;
+import com.construrrenta.api_gateway.infrastructure.security.services.CustomUserDetailsService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-    private final TokenPort tokenPort; 
+    private final JwtTokenAdapter jwtTokenAdapter; 
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public JwtValidationFilter(TokenPort tokenPort) {
-        this.tokenPort = tokenPort;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -33,21 +34,22 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt)) {
-                UUID userId = tokenPort.validateAccessToken(jwt);
-            
-                String roleString = tokenPort.extractRole(jwt);
+            if (StringUtils.hasText(jwt) && jwtTokenAdapter.validateToken(jwt)) {
+                String username = jwtTokenAdapter.getUsername(jwt);
 
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + roleString);
-                List<SimpleGrantedAuthority> authorities = List.of(authority);
-                
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+                    
         } catch (Exception ex) {
             logger.error("No se pudo establecer la autenticación: " + ex.getMessage());
         }

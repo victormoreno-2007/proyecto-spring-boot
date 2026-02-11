@@ -17,7 +17,9 @@ public class SecurityUser implements UserDetails {
     public User getDomainUser() {
         return this.domainUser;
     }
-    
+    public java.util.UUID getId() {
+        return this.domainUser.getId();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + domainUser.getRole().name()));

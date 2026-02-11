@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.construrrenta.api_gateway.domain.model.booking.Booking;
 import com.construrrenta.api_gateway.domain.ports.out.ManageBookingUseCase;
+import com.construrrenta.api_gateway.infrastructure.security.model.SecurityUser;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,11 +30,11 @@ public class BookingController {
     // 1. CREAR RESERVA
     @PostMapping
     public ResponseEntity<Booking> createBooking(
-        @AuthenticationPrincipal UUID userId,
+        @AuthenticationPrincipal SecurityUser user,
         @RequestBody BookingRequest request
     ) {
         Booking booking = manageBookingUseCase.createBooking(
-            userId, 
+            user.getId(), 
             request.getToolId(),
             request.getStartDate(),
             request.getEndDate()

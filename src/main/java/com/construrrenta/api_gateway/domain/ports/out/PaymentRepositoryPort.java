@@ -12,5 +12,6 @@ public interface PaymentRepositoryPort {
     Optional<Payment> findById(UUID id);
     Optional<Payment> findByBookingId(UUID bookingId);
     List<Payment> findAll();
+    List<Payment> findByUserId(UUID UserId);
 
 }

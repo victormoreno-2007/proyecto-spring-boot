@@ -29,6 +29,23 @@ public class JwtTokenAdapter implements TokenPort {
         this.accessTokenExpiration = accessTokenExpiration;
     }
 
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // metodo  para saber cual es el usuario 
+    public String getUsername(String token) {
+        return extractEmail(token);
+    }
+
     @Override
     public String generateAccessToken(UUID userId, String email, Role role, String firstName) {
         Date now = new Date();

@@ -3,6 +3,8 @@ package com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.re
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort{
 
     private final JpaPaymentRepository jpaPaymentRepository;
     private final PaymentMapper paymentMapper;
+    private final com.construrrenta.api_gateway.infrastructure.adapters.out.persistence.repositories.booking.JpaBookingRepository jpaBookingRepository;
 
     @Override
     public Payment save(Payment payment) {
@@ -42,5 +45,17 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort{
         return jpaPaymentRepository.findAll().stream()
                 .map(paymentMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Payment> findByUserId(UUID userId) {
+        List<UUID> bookingIds = jpaBookingRepository.findByUserId(userId).stream()                
+        .map(com.construrrenta.api_gateway.infrastructure.adapters.out.entities.BookingEntity::getId)
+                .collect(Collectors.toList());
+
+        return jpaPaymentRepository.findAll().stream()
+                .filter(payment -> bookingIds.contains(payment.getBookingId()))
+                .map(paymentMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }
